@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#160A0E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="תפריט לחם יין">
+<title>תרגול תפריט — לחם יין</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Frank+Ruhl+Libre:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: dark;
+    --bg:#160A0E; --panel:#241119; --surface:#311922; --raise:#3A2029;
+    --ink:#F2E8DE; --ink-soft:#D8C7BB; --muted:#A38B7C; --line:#452833;
+    --wine:#8C2F47; --wine-deep:#5E1B2C;
+    --olive:#7FA34F; --olive-dark:#2C3B23; --olive-text:#C6DCA0;
+    --clay:#D9705A; --clay-dark:#43201B; --clay-text:#F0B3A4;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:'Assistant','Segoe UI',Arial,sans-serif;
+       direction:rtl;font-size:17px;line-height:1.55;-webkit-text-size-adjust:100%}
+  .wrap{max-width:760px;margin:0 auto;padding:0 14px calc(70px + env(safe-area-inset-bottom))}
+  header.top{padding:20px 0 16px;text-align:center;color:var(--ink)}
+  .logo{display:inline-block;background:#0D0508;border:1.5px solid var(--wine);border-radius:12px;
+        padding:10px 26px;font-family:'Frank Ruhl Libre',Georgia,serif;font-size:28px;letter-spacing:.06em;
+        color:#FFF6EE;line-height:1.15}
+  .logo small{display:block;font-size:11px;letter-spacing:.2em;color:var(--muted);font-family:'Assistant',sans-serif}
+  header.top p{margin:12px 0 0;color:var(--muted);font-size:15px}
+  nav.tabs{display:flex;gap:5px;background:var(--panel);padding:5px;border-radius:12px;margin-bottom:16px}
+  nav.tabs button{flex:1;border:0;background:transparent;color:var(--muted);font-family:inherit;
+        font-size:14.5px;font-weight:600;padding:9px 2px;border-radius:9px;cursor:pointer}
+  nav.tabs button[aria-selected="true"]{background:var(--wine);color:#FCEFE9}
+  nav.tabs button:focus-visible{outline:2px solid var(--clay);outline-offset:2px}
+  .panel{background:var(--panel);border-radius:14px;padding:16px}
+  .hidden{display:none !important}
+  .search,input[type=text],textarea,select{width:100%;padding:11px 13px;border:1px solid var(--line);
+        border-radius:10px;font-family:inherit;font-size:16px;background:var(--surface);color:var(--ink)}
+  ::placeholder{color:var(--muted);opacity:1}
+  input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--clay);outline-offset:1px}
+  textarea{min-height:92px;resize:vertical;line-height:1.5}
+  label{display:block;font-size:14px;color:var(--muted);margin:12px 0 5px}
+  .filters{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 14px}
+  .chip{border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);font-family:inherit;
+        font-size:13.5px;padding:6px 11px;border-radius:20px;cursor:pointer}
+  .chip[aria-pressed="true"]{background:var(--wine);color:#FCEFE9;border-color:var(--wine)}
+  h2.cat{font-family:'Frank Ruhl Libre',Georgia,serif;font-size:19px;margin:20px 0 8px;padding-bottom:6px;
+        border-bottom:2px solid var(--wine);color:var(--ink)}
+  h2.cat:first-of-type{margin-top:4px}
+  .cat-note{font-size:14px;color:var(--muted);margin:-4px 0 10px}
+  .dish{border-bottom:1px solid var(--line);padding:10px 0}
+  .dish:last-child{border-bottom:0}
+  .dish-head{display:flex;align-items:baseline;gap:8px}
+  .dish-name{font-weight:700;font-size:16.5px;flex:1}
+  .dish-desc{margin:6px 0 0;font-size:15.5px;color:var(--ink-soft)}
+  .tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+  .tag{font-size:12.5px;padding:2px 8px;border-radius:5px;background:var(--raise);color:var(--ink-soft)}
+  .tag.warn{background:var(--clay-dark);color:var(--clay-text)}
+  .tag.good{background:var(--olive-dark);color:var(--olive-text)}
+  .tag.new{background:var(--wine);color:#FCEFE9}
+  .mark{border:1px solid var(--line);background:var(--surface);border-radius:7px;font-family:inherit;
+        font-size:12.5px;padding:3px 9px;cursor:pointer;color:var(--muted)}
+  .mark[data-on="1"]{background:var(--olive);border-color:var(--olive);color:#131A0C}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;min-height:230px;display:flex;
+        flex-direction:column;justify-content:center;padding:26px 20px;text-align:center;cursor:pointer}
+  .card .front{font-family:'Frank Ruhl Libre',Georgia,serif;font-size:26px;line-height:1.3}
+  .card .cat-label{color:var(--muted);font-size:13.5px;margin-bottom:10px}
+  .card .back{font-size:17px;text-align:right;color:var(--ink-soft)}
+  .hint{text-align:center;color:var(--muted);font-size:14px;margin-top:10px}
+  .row{display:flex;gap:8px;margin-top:14px}
+  .btn{flex:1;border:0;border-radius:10px;padding:12px;font-family:inherit;font-size:15.5px;font-weight:600;
+        cursor:pointer;background:var(--wine);color:#FCEFE9}
+  .btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+  .btn.danger{background:var(--clay-dark);color:var(--clay-text);border:1px solid var(--clay)}
+  .btn:disabled{opacity:.4;cursor:default}
+  .counter{text-align:center;color:var(--muted);font-size:14px;margin-bottom:10px}
+  .q-num{color:var(--muted);font-size:14px}
+  .q-text{font-size:19px;font-weight:700;margin:6px 0 16px;line-height:1.4}
+  .opt{display:block;width:100%;text-align:right;background:var(--surface);border:1px solid var(--line);
+        border-radius:10px;padding:12px 14px;margin-bottom:9px;font-family:inherit;font-size:16px;
+        cursor:pointer;line-height:1.45;color:var(--ink)}
+  .opt.correct{background:var(--olive-dark);border-color:var(--olive)}
+  .opt.wrong{background:var(--clay-dark);border-color:var(--clay)}
+  .opt:disabled{cursor:default}
+  .feedback{margin-top:12px;padding:12px 14px;border-radius:10px;font-size:15.5px}
+  .feedback.ok{background:var(--olive-dark);color:var(--olive-text)}
+  .feedback.no{background:var(--clay-dark);color:var(--clay-text)}
+  .bar{height:6px;background:var(--raise);border-radius:4px;overflow:hidden;margin-bottom:14px}
+  .bar i{display:block;height:100%;background:var(--clay);transition:width .25s}
+  .score{font-family:'Frank Ruhl Libre',Georgia,serif;font-size:44px;text-align:center;margin:6px 0}
+  .mistake{border-right:3px solid var(--clay);padding:4px 10px;margin-bottom:10px;font-size:15px;color:var(--ink-soft)}
+  table{width:100%;border-collapse:collapse;font-size:15px;margin-top:6px}
+  th,td{border:1px solid var(--line);padding:7px 8px;text-align:right}
+  th{background:var(--raise);font-weight:700}
+  .box{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:14px;margin-bottom:14px}
+  .box h3{margin:0 0 4px;font-size:17px}
+  .box p.sub{margin:0 0 10px;font-size:14px;color:var(--muted)}
+  .review{border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:9px;background:var(--panel)}
+  .review.newitem{border-right:4px solid var(--olive)}
+  .review.changed{border-right:4px solid var(--clay)}
+  .review .old{font-size:14px;color:var(--muted);text-decoration:line-through;margin-top:5px}
+  .review label{display:flex;gap:8px;align-items:flex-start;margin:0;color:var(--ink);font-size:15.5px}
+  .review input[type=checkbox]{margin-top:5px;width:18px;height:18px;flex:none;accent-color:var(--olive)}
+  .status{font-size:14.5px;padding:10px 12px;border-radius:9px;margin-top:10px}
+  .status.work{background:var(--raise);color:var(--ink-soft)}
+  .status.err{background:var(--clay-dark);color:var(--clay-text)}
+  .status.done{background:var(--olive-dark);color:var(--olive-text)}
+  footer{color:var(--muted);font-size:13px;text-align:center;padding:18px 6px 6px;line-height:1.6}
+  @media (max-width:420px){body{font-size:16px}.card .front{font-size:22px}nav.tabs button{font-size:13.5px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="logo">לחם יין<small>מאז 1999</small></div>
+    <p>תרגול תפריט — בוקר, צהריים וערב</p>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="study">לימוד</button>
+    <button role="tab" aria-selected="false" data-tab="cards">כרטיסיות</button>
+    <button role="tab" aria-selected="false" data-tab="quiz">מבחן</button>
+    <button role="tab" aria-selected="false" data-tab="edit">עדכון תפריט</button>
+  </nav>
+
+  <section class="panel" id="study"></section>
+
+  <section class="panel hidden" id="cards">
+    <div class="filters" id="cardFilters"></div>
+    <div class="counter" id="cardCounter"></div>
+    <div class="card" id="card"><div class="front">טוען…</div></div>
+    <div class="hint">לחיצה על הכרטיס הופכת אותו</div>
+    <div class="row">
+      <button class="btn ghost" id="prevCard">הקודם</button>
+      <button class="btn" id="nextCard">הבא</button>
+    </div>
+    <div class="row"><button class="btn ghost" id="shuffleCards">ערבוב מחדש</button></div>
+  </section>
+
+  <section class="panel hidden" id="quiz"></section>
+  <section class="panel hidden" id="edit"></section>
+
+  <footer>
+    מבוסס על תפריט ההדרכה של לחם יין, גרסה 2026.3.<br>
+    בכל מקרה של סתירה — התפריט המודפס והבריף במשמרת קובעים.
+  </footer>
+</div>
+
+<script>
+/* ============================ נתוני הבסיס ============================ */
+const CATS = [
+  { id:'basics', name:'רטבים ומושגים כלליים', cards:true, items:[
+    {n:`רוטב ויניגרט`, d:`רוטב לסלט על בסיס חרדל, דבש, חומץ יין לבן ושמן זית.`},
+    {n:`רוטב ויניגרט צרפתי`, d:`רוטב לסלט על בסיס חרדל, מיונז, שום וצלפים.`},
+    {n:`רוטב קיסר`, d:`על בסיס אנשובי, פרמז'ן, מיונז, שום, סויה וצלפים.`, t:[{x:`מכיל דגים (אנשובי)`,w:1}]},
+    {n:`איולי צלפים`, d:`צלפים, גרידת לימון, כוסברה ומיונז.`},
+    {n:`מיונז חריף`, d:`ספייסי מיונז.`, t:[{x:`חריף`,w:1}]},
+    {n:`ריבת הבית`, d:`ריבת אגסים עם קינמון — זו הריבה היחידה הקיימת במסעדה.`, t:[{x:`שאלת מלכודת`,w:1}]},
+    {n:`סלט קולסלאו`, d:`סלט כרוב וגזר עם מיונז. מוכן מראש.`, t:[{x:`מוכן מראש`,w:1}]},
+    {n:`תערובת חסות`, d:`חסה ערבית, חסה אדומה וחסה מסולסלת.`},
+    {n:`מוכן מראש — הגדרה`, d:`מנה שמוכנה מראש ואין אפשרות לעשייה מיוחדת עבור לקוח. לקוח שלא אוהב מרכיב — אפשר להציע לו משהו אחר במקומו, אבל לא להכין לו מנה חדשה.`},
+    {n:`פסטור`, d:`כל המוצרים במסעדה מפוסטרים.`}
+  ]},
+  { id:'breakfast', name:'תפריט בוקר', cards:true,
+    note:`א׳–ה׳ 09:00–11:30 · שישי 08:00–11:45 · שבת 09:00–12:00. התפריט זהה כל השבוע; בשבת יש גם בראנץ׳ החל מ-12:00.`,
+    items:[
+    {n:`יוגורט גרנולה`, d:`יוגורט יווני 10% שומן עם גרנולה תוצרת בית ופירות טריים (מתחלפים כל עונה), דבש בצד.`},
+    {n:`גרבדלקס`, d:`פרוסות סלמון כבוש, גבינת שמנת, קרוקטיני, מיני מלפפון וחצי לימון. מוגש עם 2 בייגל בצד (לבן ודגנים).`},
+    {n:`טוסט אבוקדו`, d:`פרוסת לחם שאור (100% קמח לבן) עם סלט אבוקדו (אבוקדו, בצל ירוק, עגבניות מיובשות ולימון) ו-2 ביצים עלומות עם מעט פפריקה מעל. אפשר בתוספת סלמון.`},
+    {n:`בורקס גבינה`, d:`בורקס גבינה מבצק עלים, מוגש עם ביצה קשה, סלט עגבניות, זיתים, טחינה ומלפפוני קורנישון.`},
+    {n:`אומלט`, d:`אומלט עם גבינת גאודה, או אומלט עם גבינת ריקוטה ועשבי תיבול (תרד ופטרוזיליה) על בסיס שמנ״ז. מוגש עם סלסלת לחמים. אפשר להחליף למקושקשת / ביצת עין / ביצת עין הפוכה — ללא שום תוספות. ניתן להזמין ללא מוצרי חלב. פטריות בתוספת תשלום.`},
+    {n:`שקשוקה עגבניות חריפה`, d:`רוטב שקשוקה (עגבניות, בצל, שום, גמבה, צ'ילי) עם 2 ביצים, מוגשת במחבת לוהטת עם מיני חלה. הרוטב מוכן מראש — אי אפשר להגיש אותה לא חריפה.`, t:[{x:`חריף תמיד`,w:1},{x:`מוכן מראש`,w:1}]},
+    {n:`אגז בנדיקט`, d:`חלת בריוש, מעליה תרד ובצל מוקפצים בחמאה, ביצים עלומות ורוטב הולנדייז. ניתן לקבל עם סלמון.`, t:[{x:`מכיל חמאה`,w:1}]},
+    {n:`סלט ירוק ראשונה`, d:`חסה אייסברג, סלנובה, שקדים פרוסים קלויים, שומר פרוס דק, פרוסות צנוניות, פרמז'ן ופרי העונה. רוטב ויניגרט.`},
+    {n:`סלט עשבים`, d:`ירוקים (מלפפון, כוסברה, סלרי, פטרוזיליה ונענע), שקדים קלויים, בצל סגול, ענבים וגבינת לאבנה של עברי.`},
+    {n:`סלט קיסר`, d:`לבבות חסה ערבית ברוטב קיסר, עם קרוטונים ושבבי גבינת פרמז'ן רג'יאנו.`},
+    {n:`סלט שוק החדש`, d:`עגבניה, מלפפון, עגבניות שרי, רוקט, בצל ירוק, בצל סגול, פטרוזיליה וכוסברה. תיבול: סומק, מלח, פלפל, שמנ״ז ולימון.`},
+    {n:`ברד פודינג חם`, d:`בצק קרואסון חרוך, קרם אנגלז (קרם וניל), גלידת וניל וריבת דובדבני אמרנה.`},
+    {n:`פרנץ' טוסט`, d:`פרוסת חלת בריוש מטוגנת עם ביצה ושבבי קורנפלקס שוגי, מעל פירות העונה טריים. מוגש עם תפוחים מקורמלים, צימוקים, רוטב מייפל ומסקרפונה.`},
+    {n:`פנקייק`, d:`עם מייפל, חמאה ופירות.`},
+    {n:`פודינג צ'יה`, d:`מנת בוקר מתוקה.`},
+    {n:`קרואסון`, d:`קרואסון חמאה עם ריבה / שוקולד / דניש / בריוש סוכר.`},
+    {n:`ארוחת בוקר לחם יין`, d:`אומלט לבחירה, סלט אישי, סלסלת לחמים, שמנת, טונה, טחינה ושתייה חמה או קרה.`}
+  ]},
+  { id:'mezze', name:'מאזטים בוקר', cards:true, items:[
+    {n:`סלט ביצים`, d:`ביצים, עירית ומיונז.`},
+    {n:`סלט טונה`, d:`טונה, סלרי, בצל לבן ומיונז.`},
+    {n:`קרם חצילים`, d:`שום, גבינת עזים וחצילים.`},
+    {n:`אבוקדו`, d:`חצי אבוקדו פרוס (בעונה).`},
+    {n:`סלסלת לחמים`, d:`2 פרוסות שאור, 2 פרוסות דגנים, פרעצל, בייגל ירושלמי וקרואסון חמאה.`, t:[{x:`שאלת כמויות`,w:1}]},
+    {n:`זיתים`, d:`זיתים ירוקים מתובלים בלימון, פטרוזיליה וצ'ילי.`},
+    {n:`ביצת עין`, d:`2 ביצים, ללא תוספת לחם.`},
+    {n:`מאזטים נוספים`, d:`טחינה, גבינה לאבנה, מאזט גרבדלקס, גבינת גאודה פרוסה, גבינת שמנת.`}
+  ]},
+  { id:'starters-business', name:'ראשונות (בעסקית — בעלות המנה העיקרית)', cards:true, items:[
+    {n:`לחם הבית`, d:`מוגש לכל שולחן.`},
+    {n:`מרק היום`, d:`משתנה מדי יום — מתעדכן בבריף לפני כל משמרת.`},
+    {n:`פטה כבד (חצי)`, d:`מוגש עם טוסטונים, קונפיטורת אגסים ו-4 קורנישונים.`},
+    {n:`סלט עשבים (ראשונה)`, d:`ירוקים (מלפפון, כוסברה, סלרי, פטרוזיליה ונענע), שקדים קלויים, בצל סגול, ענבים וגבינת לאבנה של עברי עם שמן זית.`},
+    {n:`כרובית בציפוי פריך`, d:`כרובית בטמפורה ופנקו (פירורי לחם), מוגשת עם איולי צלפים ומיונז חריף.`},
+    {n:`סביצ'ה דג ים`, d:`2 יחידות, מוגש בטאקו.`, t:[{x:`2 יח׳ בצהריים`,w:1}]},
+    {n:`חציל קלוי`, d:`טחינה, סלסת עגבניות (מכילה שום וכוסברה), פטרוזיליה וכוסברה, שמן זית, מלח גס, מקל פרמז'ן ולאבנה.`},
+    {n:`קרפצ'יו בקר (ראשונה בעסקית)`, d:`עם פרמז'ן ועלי רוקט.`}
+  ]},
+  { id:'starters-paid', name:'ראשונות בתשלום', cards:true, items:[
+    {n:`פוקצ'ת הבית`, d:`מוגשת עם 3 קונים: עגבניות מגורדות עם בלסמי, שום ושמן זית; טחינה; קרם חצילים.`, t:[{x:`3 קונים`,w:1}]},
+    {n:`מרק בצל צרפתי`, d:`מרק בצל עשיר בחמאה וציר בקר, עשוי על פי המסורת. מגיע עם טוסטון/צנים וגבינה מותכת.`, t:[{x:`מכיל חמאה`,w:1}]},
+    {n:`סשימי טונה אדומה`, d:`קולרבי כבוש, צנונית מוחמצת, מעל צ'ילי ברוטב יוזו.`},
+    {n:`קרפצ'יו בקר`, d:`בשר בקר פרוס דק, נא, בתיבול שמן זית, מלח גס ופלפל שחור גרוס. מוגש עם עלי רוקט ופרמז'ן מעל, צנימים ומלח קטן בצד.`, t:[{x:`בשר נא`,w:1}]},
+    {n:`מוצרלה עגבניות`, d:`קרפצ'יו עגבניות, שמן זית, שום קונפי, מעט פרוסות פלפל חריף ועלי בזיליקום.`},
+    {n:`לחמג'ון`, d:`בצק פוקצ'ה, בשר בקר וכבש טחון עם חציל, צנוברים, טחינה, פטרוזיליה וצ'ילי.`},
+    {n:`ברוסקטה`, d:`מוגשת על פרוסת שאור, על מצע איולי צלפים, סלטון ארוגולה וצנונית.`}
+  ]},
+  { id:'salads', name:'סלטים', cards:true, items:[
+    {n:`סלט ירוק ראשונה (צהריים)`, d:`חסה אייסברג, סלנובה, שקדים פרוסים קלויים, שומר פרוס דק, פרי העונה ופרמז'ן. מתובל בויניגרט.`},
+    {n:`סלט קיסר / קיסר עוף`, d:`לבבות חסה ערבית ברוטב קיסר, קרוטונים ושבבי פרמז'ן רג'יאנו. בגרסת העוף — רצועות עוף בגריל בתיבול חרדל ורוזמרין.`},
+    {n:`סלט עוף בגריל`, d:`תערובת חסות (ערבית, מסולסלת, אדומה ועלי בייבי), עגבניות שרי, ירקות שורש (גזר, צנון, שורש פטרוזיליה וקולרבי), פילה עוף בגריל בתיבול חרדל ורוזמרין ורצועות נאצ'וס פריכות. רוטב ויניגרט צרפתי.`},
+    {n:`סלט פטוש`, d:`עגבניה, מלפפון, עגבניות שרי, רוקט, בצל ירוק, בצל סגול, פטרוזיליה, כוסברה, גבינת המאירי וקרוטוני פרנה עם זעתר. תיבול: סומק, מלח, פלפל, שמנ״ז ולימון.`}
+  ]},
+  { id:'pasta', name:'פסטות', cards:true, items:[
+    {n:`ספגטי פומודורו`, d:`ספגטי ברוטב עגבניות איטלקי קלאסי: עגבניות שרי, שום, שמן זית ובזיליקום.`},
+    {n:`פטוצ'יני בולונז`, d:`אטריות פסטה דקה ורחבה ברוטב בולונז — בשר בקר, ירקות שורש, רוטב עגבניות ויין אדום.`},
+    {n:`ניוקי ערמונים וכמהין`, d:`ניוקי תפוחי אדמה ברוטב שמנת עם ערמונים, שמן כמהין, פטריות פורטובלו ושמפיניון.`},
+    {n:`טורטליני תרד וגבינות`, d:`בחמאת עגבניות ואורגנו טרי. 7 יחידות.`, t:[{x:`7 יחידות`,w:1}]},
+    {n:`קפלטי בשר מפורק`, d:`בקרם ארטישוק ירושלמי. ראשונה — 3 יחידות, עיקרית — 6 יחידות.`, t:[{x:`3 / 6 יחידות`,w:1}]},
+    {n:`רטבים לספגטי/פטוצ'יני (לא בתפריט)`, d:`עגבניות/פומודורו — עגבניות, שום ובזיליקום. ורודה — שילוב אלפרדו ורוטב עגבניות. בולונז — בשר בקר, ירקות שורש, רוטב עגבניות ויין אדום.`}
+  ]},
+  { id:'kids', name:'ארוחות ילדים', cards:true, note:`כל ארוחת ילדים מוגשת עם תוספת אחת — חמה או קרה.`, items:[
+    {n:`שניצל ילדים`, d:`יחידה אחת של שניצל דק בציפוי פירורי לחם, עם חצי לימון בצד.`},
+    {n:`המבורגר ילדים 125 ג'`, d:`מוגש בלחמנייה עם חסה, עגבניה, מלפפון חמוץ ובצל. סלט קולסלאו ומיונז בצד.`, t:[{x:`125 גרם`,w:1}]},
+    {n:`שניצל מיקה`, d:`שניצל בלחמנייה של המבורגר, עם חסה, עגבנייה ומיונז.`}
+  ]},
+  { id:'sides', name:'תוספות למנות עיקריות', cards:false, note:`המנות העיקריות מוגשות עם תוספת חמה אחת לבחירה או סלט.`, items:[
+    {n:`רשימת התוספות`, d:`צ'יפס בלגי; פירה עם בצל פריך (חלבי); אורז עם שבבי גזר, בצל ושקדים; שעועית ירוקה חלוטה; ירקות מוקפצים (בצל, שרי, שעועית ירוקה, ברוקולי); סלט ירוק (חסה, רוקט, בצל ושרי).`, t:[{x:`פירה = חלבי`,w:1}]}
+  ]},
+  { id:'fish', name:'דגים', cards:true, items:[
+    {n:`פיש אנד צ'יפס`, d:`4 נתחים של פילה אמנון מטוגן בטמפורה, פיסטוק ופצפוצי אורז. מוגש עם צ'יפס — אפשר להחליף לתוספת חמה אחרת או סלט.`, t:[{x:`4 נתחים`,w:1}]},
+    {n:`פילה סלמון`, d:`פילה סלמון טרי, מוגש ברוטב חמאת שום, תרד וקרם עגבניות מיובשות.`, t:[{x:`מכיל חמאה`,w:1}]},
+    {n:`טורטליני חציל שרוף ופילה דניס`, d:`מוגש פילה אחד. פילה דניס טרי על מצע טורטליני חציל שרוף וגבינות, ירקות העונה (זוקיני, שעועית ירוקה, עגבניות שרי), שום קונפי ויין לבן. מגיע ללא תוספת.`, t:[{x:`ללא תוספת`,w:1}]},
+    {n:`פילה בר ים`, d:`בתנור ברוטב יין לבן עם עגבניות שרי, זיתי קלמטה, פטרוזיליה וחמאה. מוגש עם תוספת אחת בצד.`, t:[{x:`מכיל חמאה`,w:1}]},
+    {n:`פילה דניס על הפלנצ'ה`, d:`מוגש 2 פילה, שמן זית ועשבי תיבול, על מצע ירקות ירוקים. + תוספת.`, t:[{x:`2 פילה`,w:1}]},
+    {n:`שניצל מוסר ים`, d:`מוגש עם סלטון ארוגולה בצד ותוספת חמה.`},
+    {n:`לברק שלם`, d:`בחמאת לימון, מוגש עם ברוקולי ותוספת חמה לבחירה. רק בערב.`, t:[{x:`ערב בלבד`,w:1}]},
+    {n:`בר ים / סלמון על הפלנצ'ה`, d:`שמן זית ועשבי תיבול על מצע ירקות ירוקים, בתוספת.`}
+  ]},
+  { id:'meat', name:'בשרים', cards:true, items:[
+    {n:`שניצל עוף`, d:`2 יחידות של שניצל דק בציפוי פירורי לחם. הנתח עצמו יבש.`, t:[{x:`2 יחידות`,w:1}]},
+    {n:`עוף בתנור`, d:`נתח חזה עוף על העצם ברוטב פורט, מוגש עם פטריות. הרוטב מכיל חמאה.`, t:[{x:`מכיל חמאה`,w:1}]},
+    {n:`המבורגר קלאסי`, d:`250 גרם בשר בקר טחון במקום (נתחי שייטל ושפונדרה), מוגש בלחמנייה עם חסה, עגבניה, בצל סגול ומלפפון חמוץ, סלט קולסלאו ומיונז בצד. מוגש עם תוספת אחת — חמה או סלט. אפשר להוסיף בצל מטוגן, פטריות מוקפצות, גבינת גאודה או ביצת עין בתוספת 5 ש"ח.`, t:[{x:`250 גרם`,w:1},{x:`שייטל ושפונדרה`,w:1}]},
+    {n:`המבורגר ביין`, d:`המבורגר על צלחת ברוטב פורט, לצידו בצל צרוב, מוגש עם פירה. הרוטב מכיל חמאה.`, t:[{x:`מכיל חמאה`,w:1}]},
+    {n:`המבורגר Beyond Meat`, d:`המבורגר טבעוני מחלבון אפונה, ללא רכיבים מהחי, ללא סויה, ללא גלוטן וללא רכיבים מהונדסים גנטית. מוגש עם תוספת אחת לבחירה. מתאים לטבעונים, צמחונים ולנמנעים מגלוטן.`, t:[{x:`טבעוני`,g:1},{x:`ללא גלוטן`,g:1}]},
+    {n:`סטייק פרגית`, d:`פרגית על הגריל לאחר השריה במרינדת חרדל וסילאן, מוגשת על מצע ירקות ירוקים (שעועית, בצל, ברוקולי, עגבניות שרי).`},
+    {n:`כבדי עוף ביין אדום ובצל`, d:`כבדי עוף מוקפצים במחבת עם יין אדום ובצל, מוגשים על פירה ומעט עלי רוקט. הכבדים מקורמלים.`},
+    {n:`שיפוד פילה בקר`, d:`170 גרם פילה בקר בשיפוד, עם שיפוד ירקות על הגריל ותוספת חמה.`, t:[{x:`170 גרם`,w:1}]},
+    {n:`פילה בקר במחבת`, d:`עם תפוח אדמה אפוי, ברוטב ציר בקר ופטריות יער — פורטובלו, שמפיניון ופורצ'יני. הרוטב מכיל שמנת.`, t:[{x:`מכיל שמנת`,w:1}]}
+  ]},
+  { id:'evening', name:'ערב בלבד (מהשעה 17:00)', cards:true, items:[
+    {n:`סביצ'ה מוסר ים`, d:`מוסר ים, אבוקדו או מנגו (בעונה), בצל סגול, פלפל אדום, צנונית וכוסברה. מוגש בטאקוס — 4 יחידות בערב.`, t:[{x:`4 יחידות`,w:1}]},
+    {n:`פטה כבד (ערב)`, d:`ממרח כבד עוף מוגש עם צנימים וריבת אגסים. יש אפשרות לחצי מנה. המנה מכילה חמאה ובצל.`, t:[{x:`מכיל חמאה`,w:1}]},
+    {n:`קרפצ'יו חציל קלוי`, d:`חציל שרוף על האש, מעל סלסת עגבניות צלויות (עגבניות, כוסברה, שום, צ'ילי ושמן זית), טחינה הר ברכה, לאבנה בופאלו, כוסברה ופטרוזיליה. מוכן — לא ניתן לשינוי.`, t:[{x:`לא ניתן לשינוי`,w:1}]},
+    {n:`פיצה מרגריטה`, d:`גבינת מוצרלה ופרמז'ן עם רוקט מעל. אין אפשרות לתוספות.`, t:[{x:`ללא תוספות`,w:1}]},
+    {n:`פיצה ביאנקה`, d:`רוטב שמנת מתוקה, שמן כמהין, בולגרית, מסקרפונה ופלפל לבן, פטריות יער — פורטובלו, שמפיניון ופורצ'יני. אין אפשרות לתוספות.`, t:[{x:`ללא תוספות`,w:1}]}
+  ]},
+  { id:'custom', name:'מנות שהוספתי', cards:true, items:[] }
+];
+
+const DESSERTS = [
+  {n:`קרם ברולה`, preg:`OK`, cel:`OK`, lac:`X`},
+  {n:`תותים מסקרפונה`, preg:`OK`, cel:`OK ללא הגרנולה`, lac:`X`},
+  {n:`ברד פודינג`, preg:`OK`, cel:`X`, lac:`X`},
+  {n:`טירמיסו`, preg:`X`, cel:`X`, lac:`X`},
+  {n:`באסקית`, preg:`OK`, cel:`OK`, lac:`X`},
+  {n:`סופלה`, preg:`OK רק אם אפוי עד הסוף`, cel:`OK ללא הקראמבל`, lac:`X`}
+];
+
+const FACTS = [
+  {q:`מה מכילה ריבת הבית?`, a:`אגסים וקינמון — וזו הריבה היחידה במסעדה`, w:[`תות שדה וּוניל`,`משמש ולימון`,`דובדבני אמרנה`]},
+  {q:`לקוח מבקש שקשוקה לא חריפה. מה עונים?`, a:`אי אפשר — הרוטב מוכן מראש וחריף`, w:[`אפשר, מכינים בלי צ'ילי`,`אפשר, מגישים את החריף בצד`,`אפשר רק בבוקר`]},
+  {q:`כמה יחידות טורטליני תרד וגבינות במנה?`, a:`7`, w:[`5`,`6`,`9`]},
+  {q:`קפלטי בשר מפורק — כמה יחידות בראשונה ובעיקרית?`, a:`3 בראשונה, 6 בעיקרית`, w:[`2 בראשונה, 4 בעיקרית`,`4 בראשונה, 8 בעיקרית`,`3 בראשונה, 5 בעיקרית`]},
+  {q:`מה משקל ההמבורגר הקלאסי ומאילו נתחים?`, a:`250 גרם, שייטל ושפונדרה`, w:[`220 גרם, אנטריקוט`,`250 גרם, אנטריקוט וצלעות`,`300 גרם, שייטל בלבד`]},
+  {q:`כמה עולה תוספת להמבורגר הקלאסי?`, a:`5 ש"ח`, w:[`ללא עלות`,`8 ש"ח`,`12 ש"ח`]},
+  {q:`מה משקל שיפוד פילה הבקר?`, a:`170 גרם`, w:[`150 גרם`,`200 גרם`,`250 גרם`]},
+  {q:`כמה פילה מגיע בפילה דניס על הפלנצ'ה?`, a:`2 פילה`, w:[`1 פילה`,`3 פילה`,`תלוי בגודל הדג`]},
+  {q:`כמה פילה בטורטליני חציל שרוף ופילה דניס?`, a:`פילה אחד, והמנה מגיעה ללא תוספת`, w:[`2 פילה עם תוספת`,`פילה אחד עם תוספת חמה`,`2 פילה ללא תוספת`]},
+  {q:`איזו מנה מוגשת רק בערב?`, a:`לברק שלם`, w:[`פילה סלמון`,`שניצל מוסר ים`,`פיש אנד צ'יפס`]},
+  {q:`מהי שעת הפתיחה של תפריט הערב?`, a:`17:00`, w:[`16:00`,`18:00`,`19:00`]},
+  {q:`מה מרכיבי סלסלת הלחמים?`, a:`2 פרוסות שאור, 2 פרוסות דגנים, פרעצל, בייגל ירושלמי וקרואסון חמאה`, w:[`3 פרוסות שאור, פרעצל וקרואסון`,`2 פרוסות שאור, פיתה, בייגל וקרואסון`,`2 פרוסות דגנים, חלה ופרעצל`]},
+  {q:`עם כמה קונים מוגשת פוקצ'ת הבית?`, a:`3 — עגבניות מגורדות, טחינה וקרם חצילים`, w:[`2 — טחינה וקרם חצילים`,`4 — כולל חמאה`,`3 — טחינה, חמאה וקרם חצילים`]},
+  {q:`כמה יחידות סביצ'ה מוגשות בערב?`, a:`4`, w:[`2`,`3`,`6`]},
+  {q:`כמה יחידות סביצ'ה דג ים בראשונות של הצהריים?`, a:`2`, w:[`3`,`4`,`6`]},
+  {q:`איזו תוספת היא חלבית?`, a:`פירה עם בצל פריך`, w:[`צ'יפס בלגי`,`אורז עם שקדים`,`שעועית ירוקה חלוטה`]},
+  {q:`ההמבורגר Beyond Meat — למי מתאים?`, a:`טבעונים, צמחונים ונמנעים מגלוטן`, w:[`צמחונים בלבד`,`טבעונים בלבד`,`נמנעים מלקטוז בלבד`]},
+  {q:`מה בסיס רוטב הקיסר?`, a:`אנשובי, פרמז'ן, מיונז, שום, סויה וצלפים`, w:[`חרדל, דבש וחומץ יין לבן`,`מיונז, שום וצלפים`,`יוגורט, לימון ושום`]},
+  {q:`במה שונה ויניגרט צרפתי מויניגרט רגיל?`, a:`הצרפתי על בסיס חרדל, מיונז, שום וצלפים`, w:[`הצרפתי מכיל דבש ושמן זית`,`הצרפתי מכיל אנשובי`,`הצרפתי מכיל יין אדום`]},
+  {q:`מהי מנת הפתיחה שמגיעה לכל שולחן?`, a:`לחם הבית`, w:[`סלט קולסלאו`,`זיתים`,`פוקצ'ת הבית`]},
+  {q:`מרק היום — איך יודעים מה יש?`, a:`מתעדכן בבריף לפני כל משמרת`, w:[`מופיע בתפריט`,`תמיד מרק בצל`,`שואלים את הלקוח`]},
+  {q:`אילו רטבים לפסטה קיימים אך לא מופיעים בתפריט?`, a:`פומודורו, ורודה ובולונז`, w:[`אלפרדו, פסטו ובולונז`,`ורודה, פסטו וארביאטה`,`פומודורו, אלפרדו ופסטו`]},
+  {q:`ממה עשוי הרוטב הוורוד?`, a:`שילוב של אלפרדו ורוטב עגבניות`, w:[`שמנת וסלק`,`עגבניות ויין אדום`,`שמנת ופפריקה`]},
+  {q:`מה ההגדרה של "מוכן מראש"?`, a:`המנה מוכנה ואי אפשר לעשות בה שינוי מיוחד ללקוח`, w:[`המנה מוכנה אך ניתן לשנות מרכיב אחד`,`המנה מוקפאת ומחוממת`,`המנה מוכנה רק בתחילת המשמרת`]},
+  {q:`מה מציעים ללקוח שלא אוהב מרכיב במנה מוכנה מראש?`, a:`להציע לו מנה או פריט אחר במקום`, w:[`להכין לו מנה חדשה בלי המרכיב`,`להוריד את המרכיב בהגשה`,`להגיש ולהסביר שאין ברירה`]},
+  {q:`שעות תפריט הבוקר בימים א׳–ה׳?`, a:`09:00–11:30`, w:[`08:00–11:45`,`09:00–12:00`,`08:30–11:30`]},
+  {q:`שעות תפריט הבוקר בשבת?`, a:`09:00–12:00, ובראנץ' מ-12:00`, w:[`08:00–11:45`,`09:00–11:30`,`10:00–13:00`]},
+  {q:`אילו פיצות אפשר להגיש עם תוספות?`, a:`אף אחת — אין אפשרות לתוספות`, w:[`מרגריטה בלבד`,`ביאנקה בלבד`,`שתיהן`]},
+  {q:`מה מכילה תערובת החסות?`, a:`חסה ערבית, חסה אדומה וחסה מסולסלת`, w:[`אייסברג, רוקט וסלנובה`,`חסה ערבית, רוקט ובייבי`,`סלנובה, אדומה ואייסברג`]},
+  {q:`אילו מנות מכילות חמאה ברוטב?`, a:`עוף בתנור, המבורגר ביין, פילה בר ים ומרק בצל צרפתי`, w:[`רק מרק בצל צרפתי`,`רק המבורגר ביין`,`ספגטי פומודורו וניוקי`]}
+];
+
+/* ============================ אחסון ============================ */
+const store = {
+  async get(k){
+    try{ if(window.storage){ const r = await window.storage.get(k); return r ? r.value : null; } }catch(e){}
+    try{ return localStorage.getItem(k); }catch(e){ return null; }
+  },
+  async set(k,v){
+    try{ if(window.storage){ await window.storage.set(k,v); return true; } }catch(e){}
+    try{ localStorage.setItem(k,v); return true; }catch(e){ return false; }
+  }
+};
+
+let known = {};            // מנות שסומנו כ"יודע"
+let customItems = [];      // מנות שנוספו ידנית או מצילום
+let edits = {};            // עדכוני תיאור למנות קיימות: {שם: תיאור חדש}
+let apiKey = '';           // רק לשימוש כשהאפליקציה מתארחת מחוץ לקלוד
+
+async function loadAll(){
+  const [k,c,e,key] = await Promise.all([
+    store.get('lym-known'), store.get('lym-custom'), store.get('lym-edits'), store.get('lym-key')
+  ]);
+  try{ known = JSON.parse(k)||{}; }catch(_){}
+  try{ customItems = JSON.parse(c)||[]; }catch(_){}
+  try{ edits = JSON.parse(e)||{}; }catch(_){}
+  apiKey = key || '';
+  rebuild(); renderStudy(); renderCardFilters(); renderCard(); renderEdit();
+}
+const saveKnown  = () => store.set('lym-known', JSON.stringify(known));
+const saveCustom = () => store.set('lym-custom', JSON.stringify(customItems));
+const saveEdits  = () => store.set('lym-edits', JSON.stringify(edits));
+
+/* ============================ עזרים ============================ */
+let ALL = [], CARDABLE = [];
+function rebuild(){
+  const cats = CATS.map(c => ({...c, items: c.items.slice()}));
+  customItems.forEach(ci=>{
+    const target = cats.find(c=>c.id===ci.cat) || cats.find(c=>c.id==='custom');
+    target.items.push({n:ci.n, d:ci.d, t:[{x:'נוסף על ידך', n:1}], isCustom:true});
+  });
+  ALL = []; 
+  cats.forEach(c=>c.items.forEach(i=>{
+    const d = edits[i.n] || i.d;
+    ALL.push({...i, d, edited: !!edits[i.n], cat:c.name, catId:c.id, cards:c.cards});
+  }));
+  CARDABLE = ALL.filter(i=>i.cards);
+  VIEW = cats;
+}
+let VIEW = [];
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+document.querySelectorAll('nav.tabs button').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('nav.tabs button').forEach(x=>x.setAttribute('aria-selected', x===b));
+    ['study','cards','quiz','edit'].forEach(id=>document.getElementById(id).classList.toggle('hidden', id!==b.dataset.tab));
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+});
+
+/* ============================ לימוד ============================ */
+let query='', catFilter='all', hideKnown=false;
+function renderStudy(){
+  const el = document.getElementById('study');
+  const chips = [{id:'all',name:'הכול'}].concat(VIEW.map(c=>({id:c.id,name:c.name})));
+  let html = `<input class="search" id="q" placeholder="חיפוש מנה או מרכיב — למשל: חמאה, פרמז׳ן, טחינה" value="${esc(query)}">
+    <div class="filters">${chips.map(c=>`<button class="chip" data-cat="${c.id}" aria-pressed="${catFilter===c.id}">${esc(c.name)}</button>`).join('')}
+    <button class="chip" id="hk" aria-pressed="${hideKnown}">הסתר מה שאני יודע</button></div>`;
+  const q = query.trim(); let shown = 0;
+  VIEW.forEach(c=>{
+    if(catFilter!=='all' && catFilter!==c.id) return;
+    const items = c.items.filter(i=>{
+      if(hideKnown && known[i.n]) return false;
+      if(!q) return true;
+      return (i.n+' '+(edits[i.n]||i.d)).includes(q);
+    });
+    if(!items.length) return;
+    shown += items.length;
+    html += `<h2 class="cat">${esc(c.name)}</h2>`;
+    if(c.note) html += `<p class="cat-note">${esc(c.note)}</p>`;
+    items.forEach(i=>{
+      const tags = (i.t||[]).map(t=>`<span class="tag ${t.w?'warn':t.g?'good':t.n?'new':''}">${esc(t.x)}</span>`).join('')
+        + (edits[i.n] ? `<span class="tag new">עודכן</span>` : '');
+      html += `<div class="dish"><div class="dish-head">
+          <span class="dish-name">${esc(i.n)}</span>
+          <button class="mark" data-mark="${esc(i.n)}" data-on="${known[i.n]?1:0}">${known[i.n]?'יודע ✓':'סמן כיודע'}</button>
+        </div><p class="dish-desc">${esc(edits[i.n]||i.d)}</p>${tags?`<div class="tags">${tags}</div>`:''}</div>`;
+    });
+  });
+  if(catFilter==='all' && (!q || 'קינוחים הריון צליאק לקטוז'.includes(q))){
+    html += `<h2 class="cat">קינוחים — הריון / צליאק / לקטוז</h2>
+      <table><tr><th>קינוח</th><th>הריון</th><th>צליאק</th><th>לקטוז</th></tr>` +
+      DESSERTS.map(d=>`<tr><td>${esc(d.n)}</td><td>${esc(d.preg)}</td><td>${esc(d.cel)}</td><td>${esc(d.lac)}</td></tr>`).join('') + `</table>`;
+    shown++;
+  }
+  if(!shown) html += `<p class="cat-note">לא נמצאה מנה מתאימה. נסה מילה אחרת, למשל מרכיב.</p>`;
+  el.innerHTML = html;
+
+  const qi = document.getElementById('q');
+  qi.oninput = e => { query = e.target.value; renderStudy();
+    const n = document.getElementById('q'); n.focus(); n.setSelectionRange(n.value.length,n.value.length); };
+  el.querySelectorAll('[data-cat]').forEach(b=> b.onclick = ()=>{ catFilter=b.dataset.cat; renderStudy(); });
+  document.getElementById('hk').onclick = ()=>{ hideKnown=!hideKnown; renderStudy(); };
+  el.querySelectorAll('[data-mark]').forEach(b=> b.onclick = ()=>{
+    const k=b.dataset.mark; known[k] = !known[k]; if(!known[k]) delete known[k]; saveKnown(); renderStudy(); });
+}
+
+/* ============================ כרטיסיות ============================ */
+let deck=[], ci=0, flipped=false, deckCat='all';
+function renderCardFilters(){
+  const f = document.getElementById('cardFilters');
+  const chips = [{id:'all',name:'הכול'}].concat(VIEW.filter(c=>c.cards && c.items.length).map(c=>({id:c.id,name:c.name})));
+  f.innerHTML = chips.map(c=>`<button class="chip" data-d="${c.id}" aria-pressed="${deckCat===c.id}">${esc(c.name)}</button>`).join('');
+  f.querySelectorAll('[data-d]').forEach(b=> b.onclick = ()=>{
+    deckCat=b.dataset.d;
+    deck = shuffle(deckCat==='all' ? CARDABLE : CARDABLE.filter(i=>i.catId===deckCat));
+    ci=0; flipped=false; renderCardFilters(); renderCard(); });
+  if(!deck.length) deck = shuffle(CARDABLE);
+}
+function renderCard(){
+  const c = deck[ci], el = document.getElementById('card');
+  document.getElementById('cardCounter').textContent = deck.length ? `${ci+1} מתוך ${deck.length}` : '';
+  if(!c){ el.innerHTML = `<div class="front">אין כרטיסים בקטגוריה הזו</div>`; return; }
+  el.innerHTML = flipped
+    ? `<div><div class="cat-label">${esc(c.n)}</div><div class="back">${esc(c.d)}</div></div>`
+    : `<div><div class="cat-label">${esc(c.cat)}</div><div class="front">${esc(c.n)}</div></div>`;
+  document.getElementById('prevCard').disabled = ci===0;
+}
+document.getElementById('card').onclick = ()=>{ flipped=!flipped; renderCard(); };
+document.getElementById('nextCard').onclick = ()=>{ ci = ci<deck.length-1 ? ci+1 : 0; flipped=false; renderCard(); };
+document.getElementById('prevCard').onclick = ()=>{ if(ci>0){ci--; flipped=false; renderCard();} };
+document.getElementById('shuffleCards').onclick = ()=>{ deck=shuffle(deck); ci=0; flipped=false; renderCard(); };
+
+/* ============================ מבחן ============================ */
+const QLEN = 15;
+let qs=[], qidx=0, score=0, mistakes=[], answered=false;
+function buildQuestions(){
+  const pool=[], withDesc = ALL.filter(i=>i.d.length>25);
+  withDesc.forEach(i=>{
+    const others = shuffle(withDesc.filter(o=>o.n!==i.n)).slice(0,3);
+    pool.push({q:`מה מרכיבי המנה "${i.n}"?`,
+      opts:shuffle([{t:i.d,ok:true}].concat(others.map(o=>({t:o.d,ok:false})))), why:`${i.n} — ${i.d}`});
+    pool.push({q:`לאיזו מנה מתאים התיאור: "${i.d}"`,
+      opts:shuffle([{t:i.n,ok:true}].concat(others.map(o=>({t:o.n,ok:false})))), why:`${i.n} — ${i.d}`});
+  });
+  FACTS.forEach(f=>pool.push({q:f.q, opts:shuffle([{t:f.a,ok:true}].concat(f.w.map(w=>({t:w,ok:false})))), why:f.a}));
+  DESSERTS.forEach(d=>{
+    [['הריון','preg'],['צליאק','cel'],['רגישות ללקטוז','lac']].forEach(([label,key])=>{
+      const correct = d[key];
+      const uniq = [...new Set(DESSERTS.filter(o=>o[key]!==correct).map(o=>o[key]))].slice(0,3);
+      if(uniq.length<2) return;
+      pool.push({q:`${d.n} — מה המצב עבור ${label}?`,
+        opts:shuffle([{t:correct,ok:true}].concat(uniq.map(w=>({t:w,ok:false})))),
+        why:`${d.n}: הריון ${d.preg} · צליאק ${d.cel} · לקטוז ${d.lac}`});
+    });
+  });
+  qs = shuffle(pool).slice(0,QLEN); qidx=0; score=0; mistakes=[]; answered=false;
+}
+function renderQuiz(){
+  const el = document.getElementById('quiz');
+  if(!qs.length){
+    el.innerHTML = `<h2 class="cat">מבחן תפריט</h2>
+      <p class="cat-note">${QLEN} שאלות אקראיות: מרכיבים, כמויות, אלרגנים ומנות מוכנות מראש. כל מבחן שונה מהקודם, וכולל גם מנות שהוספת.</p>
+      <button class="btn" id="startQuiz">התחל מבחן</button>`;
+    document.getElementById('startQuiz').onclick = ()=>{ buildQuestions(); renderQuiz(); }; return;
+  }
+  if(qidx >= qs.length){
+    el.innerHTML = `<div class="score">${score}/${qs.length}</div>
+      <p style="text-align:center;color:var(--muted);margin-top:0">${Math.round(score/qs.length*100)}% נכון</p>
+      ${mistakes.length ? `<h2 class="cat">לחזור על אלה</h2>` + mistakes.map(m=>`<div class="mistake"><b>${esc(m.q)}</b><br>${esc(m.why)}</div>`).join('') : `<p style="text-align:center">בלי טעויות.</p>`}
+      <div class="row"><button class="btn" id="again">מבחן חדש</button></div>`;
+    document.getElementById('again').onclick = ()=>{ buildQuestions(); renderQuiz(); }; return;
+  }
+  const q = qs[qidx];
+  el.innerHTML = `<div class="bar"><i style="width:${qidx/qs.length*100}%"></i></div>
+    <div class="q-num">שאלה ${qidx+1} מתוך ${qs.length} · ניקוד ${score}</div>
+    <div class="q-text">${esc(q.q)}</div>
+    <div>${q.opts.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o.t)}</button>`).join('')}</div><div id="fb"></div>`;
+  el.querySelectorAll('.opt').forEach(b=> b.onclick = ()=>{
+    if(answered) return; answered = true;
+    const chosen = q.opts[+b.dataset.i];
+    el.querySelectorAll('.opt').forEach((x,i)=>{ x.disabled=true;
+      if(q.opts[i].ok) x.classList.add('correct'); else if(x===b) x.classList.add('wrong'); });
+    if(chosen.ok) score++; else mistakes.push({q:q.q, why:q.why});
+    document.getElementById('fb').innerHTML =
+      `<div class="feedback ${chosen.ok?'ok':'no'}">${chosen.ok?'נכון. ':'לא נכון. '}${esc(q.why)}</div>
+       <div class="row"><button class="btn" id="next">${qidx+1<qs.length?'לשאלה הבאה':'לסיכום'}</button></div>`;
+    document.getElementById('next').onclick = ()=>{ qidx++; answered=false; renderQuiz(); };
+  });
+}
+
+/* ============================ עדכון תפריט ============================ */
+let pending = [];   // תוצאות זיהוי מצילום, ממתינות לאישור
+
+function renderEdit(){
+  const el = document.getElementById('edit');
+  const catOpts = CATS.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  el.innerHTML = `
+    <div class="box">
+      <h3>צילום תפריט</h3>
+      <p class="sub">צלם דף מהתפריט. המנות שיזוהו יוצגו לאישור לפני שייכנסו למאגר — מנות חדשות ותיאורים שהשתנו.</p>
+      <input type="file" id="photo" accept="image/*" capture="environment" style="width:100%">
+      <label for="photoCat">לאיזו קטגוריה לשייך</label>
+      <select id="photoCat">${catOpts}</select>
+      <div class="row"><button class="btn" id="scan" disabled>זהה מנות מהתמונה</button></div>
+      <div id="scanStatus"></div>
+      <div id="pendingList"></div>
+    </div>
+
+    <div class="box">
+      <h3>הוספת מנה ידנית</h3>
+      <label for="nName">שם המנה</label>
+      <input type="text" id="nName" placeholder="למשל: סלט חורף">
+      <label for="nDesc">מרכיבים ואופן הגשה</label>
+      <textarea id="nDesc" placeholder="כתוב כמו בתפריט — מרכיבים, כמויות, מה מגיע בצד"></textarea>
+      <label for="nCat">קטגוריה</label>
+      <select id="nCat">${catOpts}</select>
+      <div class="row"><button class="btn" id="addDish">הוסף למאגר</button></div>
+      <div id="addStatus"></div>
+    </div>
+
+    <div class="box">
+      <h3>עדכון מנה קיימת</h3>
+      <label for="eDish">בחר מנה</label>
+      <select id="eDish"><option value="">— בחר —</option>${ALL.map(i=>`<option value="${esc(i.n)}">${esc(i.n)}</option>`).join('')}</select>
+      <label for="eDesc">תיאור מעודכן</label>
+      <textarea id="eDesc" placeholder="בחר מנה כדי לטעון את התיאור הנוכחי"></textarea>
+      <div class="row">
+        <button class="btn" id="saveEdit">שמור עדכון</button>
+        <button class="btn ghost" id="resetEdit">החזר למקור</button>
+      </div>
+      <div id="editStatus"></div>
+    </div>
+
+    <div class="box">
+      <h3>המנות שהוספתי (${customItems.length})</h3>
+      ${customItems.length ? customItems.map((c,i)=>`<div class="review newitem">
+          <b>${esc(c.n)}</b><div style="font-size:15px">${esc(c.d)}</div>
+          <div class="row"><button class="btn danger" data-del="${i}">מחק</button></div></div>`).join('')
+        : `<p class="sub" style="margin:0">עדיין לא הוספת מנות.</p>`}
+      <div class="row">
+        <button class="btn ghost" id="exportData">ייצוא גיבוי</button>
+        <button class="btn ghost" id="importBtn">ייבוא גיבוי</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json,.json" class="hidden">
+      <div id="ioStatus"></div>
+    </div>
+
+    <div class="box">
+      <h3>מפתח API לזיהוי תמונות</h3>
+      <p class="sub">נדרש רק כשהאפליקציה מתארחת מחוץ לקלוד (למשל ב-Vercel). בתוך קלוד הזיהוי עובד בלי מפתח. המפתח נשמר רק בדפדפן הזה.</p>
+      <input type="text" id="key" placeholder="sk-ant-…" value="${esc(apiKey)}">
+      <div class="row"><button class="btn ghost" id="saveKey">שמור מפתח</button></div>
+      <div id="keyStatus"></div>
+    </div>`;
+
+  /* --- צילום --- */
+  let imgData = null, imgType = 'image/jpeg';
+  const scanBtn = document.getElementById('scan');
+  document.getElementById('photo').onchange = e=>{
+    const f = e.target.files[0]; if(!f) return;
+    imgType = f.type || 'image/jpeg';
+    const r = new FileReader();
+    r.onload = ()=>{ imgData = r.result.split(',')[1]; scanBtn.disabled = false;
+      say('scanStatus','done','התמונה נטענה. אפשר לזהות מנות.'); };
+    r.onerror = ()=> say('scanStatus','err','לא הצלחתי לקרוא את התמונה. נסה תמונה אחרת.');
+    r.readAsDataURL(f);
+  };
+  scanBtn.onclick = ()=> scanImage(imgData, imgType, document.getElementById('photoCat').value);
+
+  /* --- הוספה ידנית --- */
+  document.getElementById('addDish').onclick = ()=>{
+    const n = document.getElementById('nName').value.trim();
+    const d = document.getElementById('nDesc').value.trim();
+    const cat = document.getElementById('nCat').value;
+    if(!n || !d){ say('addStatus','err','צריך שם מנה ותיאור.'); return; }
+    if(ALL.some(i=>i.n===n)){ say('addStatus','err','כבר קיימת מנה בשם הזה. עדכן אותה בקטע "עדכון מנה קיימת".'); return; }
+    customItems.push({n,d,cat}); saveCustom(); rebuild();
+    renderStudy(); renderCardFilters(); renderCard(); renderEdit();
+    say('addStatus','done',`"${n}" נוספה. היא תופיע גם בכרטיסיות ובמבחן.`);
+  };
+
+  /* --- עדכון קיים --- */
+  const eDish = document.getElementById('eDish'), eDesc = document.getElementById('eDesc');
+  eDish.onchange = ()=>{ const it = ALL.find(i=>i.n===eDish.value); eDesc.value = it ? it.d : ''; };
+  document.getElementById('saveEdit').onclick = ()=>{
+    const n = eDish.value, d = eDesc.value.trim();
+    if(!n || !d){ say('editStatus','err','בחר מנה וכתוב תיאור.'); return; }
+    edits[n] = d; saveEdits(); rebuild(); renderStudy(); renderCard();
+    say('editStatus','done',`"${n}" עודכנה.`);
+  };
+  document.getElementById('resetEdit').onclick = ()=>{
+    const n = eDish.value; if(!n) return;
+    delete edits[n]; saveEdits(); rebuild(); renderStudy(); renderCard();
+    const it = ALL.find(i=>i.n===n); eDesc.value = it ? it.d : '';
+    say('editStatus','done','התיאור הוחזר למקור.');
+  };
+
+  /* --- מחיקה, גיבוי --- */
+  el.querySelectorAll('[data-del]').forEach(b=> b.onclick = ()=>{
+    customItems.splice(+b.dataset.del,1); saveCustom(); rebuild();
+    renderStudy(); renderCardFilters(); renderCard(); renderEdit();
+  });
+  document.getElementById('exportData').onclick = ()=>{
+    const blob = new Blob([JSON.stringify({customItems,edits,known},null,2)],{type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'lehem-yain-backup.json'; a.click();
+    say('ioStatus','done','הגיבוי ירד למכשיר.');
+  };
+  document.getElementById('importBtn').onclick = ()=> document.getElementById('importFile').click();
+  document.getElementById('importFile').onchange = e=>{
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = ()=>{
+      try{
+        const data = JSON.parse(r.result);
+        if(Array.isArray(data.customItems)) customItems = data.customItems;
+        if(data.edits) edits = data.edits;
+        if(data.known) known = data.known;
+        saveCustom(); saveEdits(); saveKnown(); rebuild();
+        renderStudy(); renderCardFilters(); renderCard(); renderEdit();
+        say('ioStatus','done','הגיבוי נטען.');
+      }catch(_){ say('ioStatus','err','הקובץ לא תקין. צריך קובץ גיבוי שיוצא מהאפליקציה.'); }
+    };
+    r.readAsText(f);
+  };
+
+  /* --- מפתח --- */
+  document.getElementById('saveKey').onclick = async ()=>{
+    apiKey = document.getElementById('key').value.trim();
+    await store.set('lym-key', apiKey);
+    say('keyStatus','done', apiKey ? 'המפתח נשמר בדפדפן הזה.' : 'המפתח נמחק.');
+  };
+
+  if(pending.length) renderPending();
+}
+
+function say(id,kind,text){ const e=document.getElementById(id); if(e) e.innerHTML = `<div class="status ${kind}">${esc(text)}</div>`; }
+
+async function scanImage(data, type, catId){
+  if(!data){ say('scanStatus','err','קודם בחר תמונה.'); return; }
+  say('scanStatus','work','מזהה מנות בתמונה… זה לוקח כמה שניות.');
+  const prompt = `זו תמונה של דף מתפריט הדרכה של מסעדה, בעברית.
+החזר JSON בלבד, בלי טקסט לפני או אחרי ובלי סימני קוד.
+המבנה: {"dishes":[{"name":"שם המנה","desc":"תיאור מלא: מרכיבים, כמויות, מה מוגש בצד"}]}
+העתק את הניסוח מהתפריט, אל תמציא מרכיבים. אם משהו לא קריא — דלג עליו.`;
+  const headers = {"Content-Type":"application/json"};
+  if(apiKey){
+    headers["x-api-key"] = apiKey;
+    headers["anthropic-version"] = "2023-06-01";
+    headers["anthropic-dangerous-direct-browser-access"] = "true";
+  }
+  try{
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method:"POST", headers,
+      body: JSON.stringify({
+        model:"claude-sonnet-4-6", max_tokens:1000,
+        messages:[{role:"user", content:[
+          {type:"image", source:{type:"base64", media_type:type, data:data}},
+          {type:"text", text:prompt}
+        ]}]
+      })
+    });
+    if(!res.ok) throw new Error('http '+res.status);
+    const json = await res.json();
+    const text = json.content.map(c=>c.type==='text'?c.text:'').join('').replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(text);
+    const dishes = parsed.dishes || [];
+    if(!dishes.length){ say('scanStatus','err','לא זוהו מנות בתמונה. נסה צילום ישר יותר, בתאורה טובה.'); return; }
+    pending = dishes.map(d=>{
+      const exist = ALL.find(i=>i.n.trim()===String(d.name).trim());
+      return { name:String(d.name).trim(), desc:String(d.desc).trim(), cat:catId,
+               status: !exist ? 'new' : (exist.d.trim()!==String(d.desc).trim() ? 'changed' : 'same'),
+               old: exist ? exist.d : '' };
+    });
+    const nNew = pending.filter(p=>p.status==='new').length;
+    const nChg = pending.filter(p=>p.status==='changed').length;
+    say('scanStatus','done', `זוהו ${pending.length} מנות: ${nNew} חדשות, ${nChg} עם תיאור שונה. סמן מה להכניס למאגר.`);
+    renderPending();
+  }catch(err){
+    say('scanStatus','err', apiKey
+      ? 'הזיהוי נכשל. בדוק שהמפתח תקין ושיש חיבור לרשת.'
+      : 'הזיהוי עובד רק כשהאפליקציה רצה בתוך קלוד. אם היא מתארחת ב-Vercel — הזן מפתח API בתיבה למטה, או הוסף את המנה ידנית.');
+  }
+}
+
+function renderPending(){
+  const box = document.getElementById('pendingList'); if(!box) return;
+  const rel = pending.filter(p=>p.status!=='same');
+  if(!rel.length){ box.innerHTML = `<div class="status done">כל המנות שזוהו כבר קיימות במאגר בדיוק כמו שהן.</div>`; return; }
+  box.innerHTML = rel.map((p,i)=>`
+    <div class="review ${p.status==='new'?'newitem':'changed'}">
+      <label><input type="checkbox" data-p="${pending.indexOf(p)}" checked>
+        <span><b>${esc(p.name)}</b> <span class="tag ${p.status==='new'?'good':'warn'}">${p.status==='new'?'מנה חדשה':'תיאור השתנה'}</span>
+        <div style="font-size:15px;margin-top:4px">${esc(p.desc)}</div>
+        ${p.old?`<div class="old">${esc(p.old)}</div>`:''}</span></label>
+    </div>`).join('') +
+    `<div class="row"><button class="btn" id="applyPending">הכנס למאגר</button>
+      <button class="btn ghost" id="dropPending">בטל</button></div>`;
+  document.getElementById('applyPending').onclick = ()=>{
+    const picked = [...box.querySelectorAll('input[data-p]:checked')].map(c=>pending[+c.dataset.p]);
+    picked.forEach(p=>{
+      if(p.status==='new') customItems.push({n:p.name, d:p.desc, cat:p.cat});
+      else edits[p.name] = p.desc;
+    });
+    saveCustom(); saveEdits(); pending=[]; rebuild();
+    renderStudy(); renderCardFilters(); renderCard(); renderEdit();
+    say('scanStatus','done', `${picked.length} עדכונים נכנסו למאגר.`);
+  };
+  document.getElementById('dropPending').onclick = ()=>{ pending=[]; renderEdit(); };
+}
+
+/* ============================ הפעלה ============================ */
+rebuild(); renderStudy(); renderCardFilters(); deck = shuffle(CARDABLE); renderCard(); renderQuiz(); renderEdit();
+loadAll();
+</script>
+</body>
+</html>
